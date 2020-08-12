@@ -11,10 +11,13 @@
 #define FIFO_NAME "myfifo"
 #define BUFFER_SIZE 300
 
+
 int main(void)
 {
    
     char outputBuffer[BUFFER_SIZE];
+    char outputBufferPrefix[BUFFER_SIZE]={"DATA: "};
+
 	uint32_t bytesWrote;
 	int32_t returnCode, fd;
 
@@ -41,9 +44,12 @@ int main(void)
 	{
         /* Get some text from console */
 		fgets(outputBuffer, BUFFER_SIZE, stdin);
+
+        //Put prefix "DATA:" in BUFFER_SIZE
+        strcat(outputBufferPrefix,outputBuffer); 
         
         /* Write buffer to named fifo. Strlen - 1 to avoid sending \n char */
-		if ((bytesWrote = write(fd, outputBuffer, strlen(outputBuffer)-1)) == -1)
+		if ((bytesWrote = write(fd, outputBufferPrefix, strlen(outputBufferPrefix)-1)) == -1)
         {
 			perror("write");
         }
@@ -51,6 +57,9 @@ int main(void)
         {
 			printf("writer: wrote %d bytes\n", bytesWrote);
         }
+
+        strcpy(outputBufferPrefix,"DATA: ");
+        strcpy(outputBuffer," ");
 	}
 	return 0;
 }
