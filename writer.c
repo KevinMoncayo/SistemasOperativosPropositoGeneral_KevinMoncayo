@@ -17,6 +17,7 @@ void my_handler (int signum)
     if (signum == SIGUSR1)
     {
         printf("Recibido SIGUSR1!\n");
+        (bytesWrote = write(fd, outputBufferPrefix2, strlen(outputBufferPrefix2)-1));
     }
 }
 
@@ -39,7 +40,7 @@ int main(void)
 
 	uint32_t bytesWrote;
 	int32_t returnCode, fd;
-    int32_t returnCode2, returnCode3; // Variable that storage management error from SIGUSR1 and SIGUSR2
+    int32_t returnCode2 = 0, returnCode3 = 0; // Variable that storage management error from SIGUSR1 and SIGUSR2
 
     /* Create named fifo. -1 means already exists so no action if already exists */
     if ( (returnCode = mknod(FIFO_NAME, S_IFIFO | 0666, 0) ) < -1 )
@@ -66,14 +67,20 @@ int main(void)
 		fgets(outputBuffer, BUFFER_SIZE, stdin);
 
         //This detects me when someone sends SIGUSR1 signal
-        if (returnCode2 = signal(SIGUSR1, my_handler) < -1)
+        if ((returnCode2 = signal(SIGUSR1, my_handler)) < -1)
         {
             perror("Error");
+            printf("A. Valor returnCode2 = %d\n",returnCode2);//This doesn't print! - Control code
+        }
+        else if (returnCode2 > 1)
+        {
+            printf("B. Valor returnCode2 = %d\n",returnCode2);//This doesn't print! - Control code
         }
         else
         {
-            printf("Valor returnCode2 = %d\n",returnCode2);
+            printf("C. Valor returnCode2 (debería ser igual a 1) = %d\n",returnCode2);//This doesn't print! - Control code
         }
+        
         
         
         //This detects me when someone sends SIGUSR2 signal
@@ -96,8 +103,8 @@ int main(void)
 			printf("writer: wrote %d bytes\n", bytesWrote);
         }
 
-        strcpy(outputBufferPrefix,"DATA: ");
-        strcpy(outputBuffer," ");
+        strcpy(outputBufferPrefix,"DATA: "); //To clean outputBufferPrefix
+        strcpy(outputBuffer," "); //To clean outputBuffer
 	}
 	return 0;
 }
