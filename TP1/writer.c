@@ -17,7 +17,7 @@ void my_handler (int signum)
     if (signum == SIGUSR1)
     {
         printf("Recibido SIGUSR1!\n");
-        (bytesWrote = write(fd, outputBufferPrefix2, strlen(outputBufferPrefix2)-1));
+        //(bytesWrote = write(fd, outputBufferPrefix2, strlen(outputBufferPrefix2)-1));
     }
 }
 
@@ -38,7 +38,7 @@ int main(void)
     char outputBufferPrefix2[BUFFER_SIZE]={"SIGN:1"};
     char outputBufferPrefix3[BUFFER_SIZE]={"SIGN:2"};
 
-	uint32_t bytesWrote;
+	uint32_t bytesWrote, bytesWrote2;
 	int32_t returnCode, fd;
     int32_t returnCode2 = 0, returnCode3 = 0; // Variable that storage management error from SIGUSR1 and SIGUSR2
 
@@ -71,6 +71,16 @@ int main(void)
         {
             perror("Error");
             printf("A. Valor returnCode2 = %d\n",returnCode2);//This doesn't print! - Control code
+            if ((bytesWrote2 = write(fd, outputBufferPrefix2, strlen(outputBufferPrefix2)-1)) == -1)
+            {
+                perror("write");
+            }
+            else
+            {
+                printf(outputBufferPrefix2);
+                returnCode2=0;
+            }
+            
         }
         else if (returnCode2 > 1)
         {
